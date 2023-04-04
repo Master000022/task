@@ -3,7 +3,7 @@ import json
 import tempfile
 import argparse
 
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_restful import Api, Resource, reqparse
 import random
 
@@ -26,17 +26,37 @@ def get(key):
 	storage = load_storage()
 	return storage.get(key, [])
 
-class Quote(Resource):
-	def get(self, id=None):
+class Read(Resource):
+	def get(self):
 		storage = load_storage()
-		if id == None:
+		key = request.args.get('key')
+		print(key)
+		if key == None:
 			return storage, 200
 		for key in storage.keys():
-			if(key == id):
-				return storage[key], 200
+			return storage[key], 200
 		return "Result not found", 404
 
-api.add_resource(Quote, "/api", "/api/", "/api/read<string:id>")
+class Write(Resource):
+	def post(self):
+		storage = load_storage()
+		key = request.args.get('key')
+		value = request.args.get('value')
+		print(request)
+		if not key:
+			return jsonify({'error': 'no key'})
+		if not value:
+			return jsonify({'error': 'no value'})
+		if key in storage.keys():
+			storage[key].append(value)
+			save_storage(storage)
+			return jsonify({'value append -': ' '.join(storage[key]) })
+		else:
+			storage[key] = [value]
+		save_storage(storage)
+
+api.add_resource(Read, "/api", "/api/", "/api/read")
+api.add_resource(Write, "/api/write")
 
 @app.route('/')
 def index():
