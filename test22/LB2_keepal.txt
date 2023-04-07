@@ -1,0 +1,29 @@
+root@proxy2:/etc/keepalived# cat keepalived.conf
+global_defs {
+        router_id lb22
+}
+
+vrrp_script check_haproxy {
+#       script "/usr/bin/killall -0 haproxy"
+        script "/usr/bin/systemctl is-active --quiet haproxy"
+        interval 2
+        weight 2
+}
+
+vrrp_instance my-web {
+        state BACKUP
+        interface enp0s3
+        virtual_router_id 123
+        priority 50
+        advert_int 1
+        authentication {
+                auth_type PASS
+                auth_pass password
+        }
+        virtual_ipaddress {
+                192.168.56.105
+        }
+        track_script {
+        check_haproxy
+        }
+}
