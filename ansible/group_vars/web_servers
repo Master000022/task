@@ -1,0 +1,7 @@
+---
+ ansible_user	 : web
+ ansible_password: 123456
+ ansible_sudo_pass: 123456
+
+
+

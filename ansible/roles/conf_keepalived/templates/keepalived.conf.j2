@@ -1,0 +1,27 @@
+global_defs {
+	router_id ha1
+}
+
+vrrp_script check_haproxy {
+	script "/usr/bin/systemctl is-active --quiet haproxy"
+	interval 2
+	weight 2
+}
+
+vrrp_instance my_web {
+	state MASTER
+	interface enp0s8
+	virtual_router_id 123
+	priority 100
+	advert_int 1
+	authentication {
+		auth_type PASS
+		auth_pass 123456
+	}
+	virtual_ipaddress {
+		192.168.56.105
+	}
+	track_script {
+		check_haproxy
+	}
+}

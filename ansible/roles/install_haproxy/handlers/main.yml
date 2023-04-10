@@ -1,0 +1,4 @@
+---
+# handlers file for install_haproxy
+- name: restart_haproxy
+  service: name=haproxy state=restarted

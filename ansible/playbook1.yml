@@ -1,0 +1,18 @@
+---
+- name: start web servers
+  hosts: web_servers
+  become: yes
+  roles:
+  - deploy_nginx
+
+- name: Haproxy install and configurate
+  hosts: haproxy_servers
+  become: yes
+  roles:
+   - install_haproxy
+ 
+- name: keepalived install and configurate
+  hosts: haproxy_servers
+  become: yes
+  roles:
+   - conf_keepalived 

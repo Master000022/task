@@ -1,0 +1,14 @@
+---
+# tasks file for deploy_nginx
+  - name: Install nginx
+    apt: name=nginx state=latest
+
+  - name: Start nginx
+    service: name=nginx state=started enabled=yes
+  
+  - name: install index
+    template: src=index.html.j2 dest=/var/www/html/index.html
+
+  - name: restart nginx
+    service: name=nginx state=restarted
+

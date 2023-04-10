@@ -1,0 +1,27 @@
+---
+- name: Install nginx
+  hosts: web_servers
+  become: yes
+
+  vars:
+   source_file: ./site/index.html
+   source_file_2: ./site2/index.html
+   destin_file: /var/www/html
+
+  tasks:
+  - name: Install nginx
+    apt: name=nginx state=latest
+  
+  - name: Start nginx
+    service: name=nginx state=started enabled=yes
+  
+  - name: Copy site index
+    copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+    when: ansible_nodename == "web1"
+
+  - name: Copy site2 index
+    copy: src={{ source_file_2 }} dest={{ destin_file }} mode=0555
+    when: ansible_nodename == "web2"
+
+  - name: restart nginx
+    service: name=nginx state=restarted
